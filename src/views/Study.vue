@@ -1,5 +1,7 @@
 <template>
-
+	<div>
+		<span>学习</span>
+	</div>
 </template>
 
 <script>

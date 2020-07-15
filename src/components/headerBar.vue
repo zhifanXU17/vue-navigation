@@ -1,26 +1,26 @@
 <template>
-	<div>
-		<a-row :gutter="16">
-			<a-col :span="18">
-				<a-input-search enter-button allow-clear size="large"
-												@search="onSearch" />
-			</a-col>
+	<a-row :gutter="16">
+		<a-col :span="18">
+			<!--  左边搜索框		-->
+			<a-input-search enter-button size="large" @search="onSearch" />
+		</a-col>
 
-			<a-col :span="6">
-				<transition name="fade">
-					<div class="city-weather" v-if="cityWeatherInfo && cityName">
-						<a-row>
-							<a-col :span="4" :style="{ fontWeight:'bolder' }">{{ cityName.addressComponent.city }}:</a-col>    <!--  城市名字  -->
-							<a-col :span="4">{{ weatherIcon(cityWeatherInfo.daily.skycon[0].value)[1] }}</a-col>  <!--  天气小图标  -->
-							<a-col :span="2"><icon-font :type=weatherIcon(cityWeatherInfo.daily.skycon[0].value)[0] /></a-col>  <!--  天气情况  -->
-							<a-col :span="14">{{ cityWeatherInfo.daily.temperature[0].min }} ~ {{ cityWeatherInfo.daily.temperature[0].max }}°C</a-col> <!--  温度范围  -->
-						</a-row>
-					</div>
-				</transition>
-			</a-col>
+		<a-col :span="6">
+			<!--	右边天气		-->
 
-		</a-row>
-	</div>
+			<transition name="slide-fade">
+				<div class="city-weather" v-if="cityWeatherInfo && cityName">
+					<a-row>
+						<a-col :span="4" :style="{ fontWeight:'bolder' }">{{ cityName.addressComponent.city }}:</a-col>    <!--  城市名字  -->
+						<a-col :span="4">{{ weatherIcon(cityWeatherInfo.daily.skycon[0].value)[1] }}</a-col>  <!--  天气小图标  -->
+						<a-col :span="2"><icon-font :type=weatherIcon(cityWeatherInfo.daily.skycon[0].value)[0] /></a-col>  <!--  天气情况  -->
+						<a-col :span="14">{{ cityWeatherInfo.daily.temperature[0].min }} ~ {{ cityWeatherInfo.daily.temperature[0].max }}°C</a-col> <!--  温度范围  -->
+					</a-row>
+				</div>
+			</transition>
+		</a-col>
+
+	</a-row>
 </template>
 
 <script>
@@ -43,17 +43,17 @@
 			IconFont
 		},
 		methods: {
-			onSearch: function (value,event) {
-				event.preventDefault()
+			onSearch: function (value) {
+				// 搜索
 				let searchSrc = 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=0&rsv_idx=1&tn=baidu&wd='
 				window.open(searchSrc + value)
 			},
 
 			getUserLocation: function () {
+				//  获取用户的坐标经纬度
 				return new Promise((resolve) => {
 					let userLocation = {}
 					navigator.geolocation.getCurrentPosition(position => {
-						//  获取用户的坐标经纬度
 						userLocation.longitude = position.coords.longitude  // 经度
 						userLocation.latitude = position.coords.latitude  //  纬度
 						resolve(userLocation)
@@ -62,6 +62,7 @@
 			},
 
 			getWeatherInfo: function() {
+				// 根据定位获取天气信息
 				this.getUserLocation().then(userLocation => {
 					//  经度在前，纬度在后，中间用半角逗号隔开，dailysteps 表示天步长选项，可选，缺省值是 5， 选择范围 1 ~ 15
 					let caiyunWeatherUrl = `/weather/${ userLocation.longitude },${ userLocation.latitude }/daily.json?dailysteps=1`
@@ -99,38 +100,30 @@
 			},
 
 			weatherIcon: function (citySkyCondition) {
-				// 根据所获得天气条件确定地方天气同时改变小图标
+				// 根据所获得天气条件确定地方天气情况并同时改变小图标
 				let iconType = ''
 				let weather = ''
-				switch (citySkyCondition) {
-					case ('CLEAR_DAY' || 'CLEAR_NIGHT'):
-						iconType =  'icon-qingtian'
-						weather = '晴天'
-						break
-					case ('PARTLY_CLOUDY_DAY' || 'CLOUDY'):
-						iconType = 'icon-jubuduoyun'
-						weather = '多云'
-						break
-					case ('PARTLY_CLOUDY_NIGHT'):
-						iconType = 'icon-yintian'
-						weather = '阴天'
-						break
-					case ('LIGHT_HAZE' || 'MODERATE_HAZE' || 'HEAVY_HAZE' || 'FOG'):
-						iconType = 'icon-dawu'
-						weather = '雾霾'
-						break
-					case ('LIGHT_RAIN' || 'MODERATE_RAIN' || 'HEAVY_RAIN' || 'STORM_RAIN'):
-						iconType = 'icon-yutian'
-						weather = '雨天'
-						break
-					case ('LIGHT_SNOW' || 'MODERATE_SNOW' || 'HEAVY_SNOW' || 'STORM_SNOW'):
-						iconType = 'icon-xuetian'
-						weather = '下雪'
-						break
-					case ('DUST' || 'SAND' || 'WIND'):
-						iconType = 'icon-longjuanfeng'
-						weather = '沙尘天'
-						break
+				if (citySkyCondition === 'CLEAR_NIGHT' || citySkyCondition === 'CLEAR_DAY') {
+					iconType =  'icon-qingtian'
+					weather = '晴天'
+				} else if (citySkyCondition === 'PARTLY_CLOUDY_DAY' || citySkyCondition === 'CLOUDY') {
+					iconType = 'icon-jubuduoyun'
+					weather = '多云'
+				} else if (citySkyCondition === 'PARTLY_CLOUDY_NIGHT') {
+					iconType = 'icon-yintian'
+					weather = '阴天'
+				} else if (citySkyCondition === 'LIGHT_HAZE' || citySkyCondition === 'MODERATE_HAZE' || citySkyCondition === 'HEAVY_HAZE' || citySkyCondition === 'FOG') {
+					iconType = 'icon-dawu'
+					weather = '雾霾'
+				} else if (citySkyCondition === 'LIGHT_RAIN' || citySkyCondition === 'MODERATE_RAIN' || citySkyCondition === 'HEAVY_RAIN' || citySkyCondition === 'STORM_RAIN') {
+					iconType = 'icon-yutian'
+					weather = '雨天'
+				} else if (citySkyCondition === 'LIGHT_SNOW' || citySkyCondition === 'MODERATE_SNOW' || citySkyCondition === 'HEAVY_SNOW' || citySkyCondition === 'STORM_SNOW') {
+					iconType = 'icon-xuetian'
+					weather = '下雪'
+				} else {
+					iconType = 'icon-longjuanfeng'
+					weather = '沙尘天'
 				}
 				return [iconType,weather]
 			}
@@ -148,10 +141,12 @@
 		font-size: 24px;
 	}
 
-	.fade-enter-active, .fade-leave-active {
-		transition: opacity .8s;
+	.slide-fade-enter-active {
+		transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 	}
-	.fade-enter, .fade-leave-to {
+
+	.slide-fade-enter {
+		transform: translateX(10px);
 		opacity: 0;
 	}
 

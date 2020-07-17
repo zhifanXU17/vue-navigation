@@ -61,7 +61,7 @@
 
 	.linksGroupTitle {
 		margin: 0 auto 24px;
-		font-weight: bolder;
+		font-weight: bold;
 	}
 
 	.linksGroupWrap .link {

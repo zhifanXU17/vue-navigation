@@ -1,13 +1,13 @@
 <template>
-	<a-row :gutter="16">
-		<a-col :span="18">
+	<a-row :gutter="16" type="flex" justify="space-between" align="middle">
+
+		<a-col :span="18" >
 			<!--  左边搜索框		-->
-			<a-input-search enter-button size="large" @search="onSearch" />
+			<a-input-search enter-button size="large" @search="onSearch" :style="{ paddingTop: '12px' }"/>
 		</a-col>
 
 		<a-col :span="6">
 			<!--	右边天气		-->
-
 			<transition name="slide-fade">
 				<div class="city-weather" v-if="cityWeatherInfo && cityName">
 					<a-row>

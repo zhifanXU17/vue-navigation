@@ -12,7 +12,19 @@ const routes = [
 	{
 		path: '/life',
 		name: 'Shopping',
-		component: () => import(/* webpackChunkName: "about" */ '../views/Life')
+		component: () => import( '../views/Life' )
+	},
+	{
+		path: '/life#购物',
+		redirect: {
+			name: 'Shopping',
+		}
+	},
+	{
+		path: '/life#便利',
+		redirect: {
+			name: 'Shopping',
+		}
 	},
 	{
 		path: '/entertain',
@@ -33,7 +45,15 @@ const routes = [
 
 const router = new VueRouter({
 	mode: 'history',
-	routes
+	// eslint-disable-next-line no-unused-vars
+	scrollBehavior (to, from, savedPosition) {
+		if (to.hash) {
+			return {
+				selector: to.hash
+			}
+		}
+	},
+	routes,
 })
 
 export default router

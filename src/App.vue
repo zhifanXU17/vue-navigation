@@ -2,27 +2,26 @@
   <div id="app">
     <a-layout>
 
-      <a-layout-sider theme="light">
+      <a-layout-sider theme="light" :style="{ height: '100vh', position: 'fixed', left: 0 }">
         <div class="logo">
           <a-icon type="fire" />
-          <a class="logoText" href="/">阳光导航</a>
+          <a class="logoText" href="/">简单导航</a>
         </div>
 
         <siderBar />
+
       </a-layout-sider>
 
-      <a-layout>
-        <a-layout-header :style="{ background: '#fff', padding: '12px 50px', lineHeight: '0', minWidth: '1065px' }">
+      <a-layout :style="{ marginLeft: '200px' }">
+        <a-layout-header :style="{ background: '#fff', minWidth: '1065px', }">
           <headerBar />
         </a-layout-header>
 
-        <a-layout-content :style="{ margin: '24px 16px 0', minWidth: '1033px' }">
-          <div :style="{ padding: '24px', background: '#fff', }">
-            <router-view/>
-          </div>
+        <a-layout-content :style="{ margin: '24px 16px 0', minWidth: '1033px', paddingTop: '24px', paddingBottom: '24px', paddingLeft: '48px', paddingRight: '48px' }">
+          <router-view/>
         </a-layout-content>
 
-        <a-layout-footer :style="{ textAlign: 'center', background: 'black', color: 'white',marginTop: '24px',padding: '86px 144px 93px 144px', minWidth: '1065px' }">
+        <a-layout-footer :style="{ background: 'black', color: 'white', marginTop: '24px', padding: '86px 144px 93px 144px', minWidth: '1065px' }">
           <footerBar />
         </a-layout-footer>
       </a-layout>

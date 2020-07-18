@@ -3,7 +3,20 @@
 
 		<a-col :span="18" >
 			<!--  左边搜索框		-->
-			<a-input-search enter-button size="large" @search="onSearch" :style="{ paddingTop: '12px' }"/>
+			<a-input-search enter-button size="large" @search="onSearch" :style="{ paddingTop: '12px' }">
+				<!--  可选择搜索引擎	-->
+				<a-select slot="addonBefore" v-model="searchEngine" class="searchEngine">
+					<a-select-option value="dogedoge">
+						多吉
+					</a-select-option>
+					<a-select-option value="baidu">
+						百度
+					</a-select-option>
+					<a-select-option value="bing">
+						必应
+					</a-select-option>
+				</a-select>
+			</a-input-search>
 		</a-col>
 
 		<a-col :span="6">
@@ -11,10 +24,10 @@
 			<transition name="slide-fade">
 				<div class="city-weather" v-if="cityWeatherInfo && cityName">
 					<a-row>
-						<a-col :span="4" :style="{ fontWeight:'bolder' }">{{ cityName.addressComponent.city }}:</a-col>    <!--  城市名字  -->
+						<a-col :span="6" :style="{ fontWeight:'bolder' }">{{ cityName.addressComponent.city }}:</a-col>    <!--  城市名字  -->
 						<a-col :span="4">{{ weatherIcon(cityWeatherInfo.daily.skycon[0].value)[1] }}</a-col>  <!--  天气小图标  -->
 						<a-col :span="2"><icon-font :type=weatherIcon(cityWeatherInfo.daily.skycon[0].value)[0] /></a-col>  <!--  天气情况  -->
-						<a-col :span="14">{{ cityWeatherInfo.daily.temperature[0].min }} ~ {{ cityWeatherInfo.daily.temperature[0].max }}°C</a-col> <!--  温度范围  -->
+						<a-col :span="12">{{ cityWeatherInfo.daily.temperature[0].min }} ~ {{ cityWeatherInfo.daily.temperature[0].max }}°C</a-col> <!--  温度范围  -->
 					</a-row>
 				</div>
 			</transition>
@@ -35,6 +48,8 @@
 		name: "header-bar",
 		data () {
 			return {
+				searchEngine: 'dogedoge' ,  //  用户所选搜索引擎
+				userLocation: null, //  用户具体定位
 				cityName: null,   //  经纬度获取具体定位城市
 				cityWeatherInfo: null, // 用户所在城市的具体天气情况
 			}
@@ -44,26 +59,47 @@
 		},
 		methods: {
 			onSearch: function (value) {
-				// 搜索
-				let searchSrc = 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=0&rsv_idx=1&tn=baidu&wd='
-				window.open(searchSrc + value)
+				// 选择一个搜索引擎并进行搜索
+				let url = ''
+				if (this.searchEngine === 'dogedoge') {
+					url = 'https://www.dogedoge.com/results?q='
+					window.open(url + value)
+				} else if (this.searchEngine === 'baidu') {
+					url = 'https://www.baidu.com/s?wd='
+					window.open(url + value)
+				} else {
+					url = 'https://www.bing.com/search?q='
+					window.open(url + value)
+				}
 			},
 
 			getUserLocation: function () {
 				//  获取用户的坐标经纬度
 				return new Promise((resolve) => {
 					let userLocation = {}
-					navigator.geolocation.getCurrentPosition(position => {
-						userLocation.longitude = position.coords.longitude  // 经度
-						userLocation.latitude = position.coords.latitude  //  纬度
+
+					function success(pos) {
+						userLocation.longitude = pos.coords.longitude  // 经度
+						userLocation.latitude = pos.coords.latitude  //  纬度
 						resolve(userLocation)
-					})
+					}
+
+					function error(err) {
+						console.warn('ERROR(' + err.code + '): ' + err.message)
+						// 若用户拒绝给予定位权限或者获取位置失败，则采用北京作为默认城市经纬度
+						userLocation.longitude = 116.40  // 经度
+						userLocation.latitude = 39.90  //  纬度
+						resolve(userLocation)
+					}
+
+					navigator.geolocation.getCurrentPosition(success,error)
 				})
 			},
 
 			getWeatherInfo: function() {
 				// 根据定位获取天气信息
 				this.getUserLocation().then(userLocation => {
+					this.userLocation = userLocation
 					//  经度在前，纬度在后，中间用半角逗号隔开，dailysteps 表示天步长选项，可选，缺省值是 5， 选择范围 1 ~ 15
 					let caiyunWeatherUrl = `/weather/${ userLocation.longitude },${ userLocation.latitude }/daily.json?dailysteps=1`
 					// 通过百度地图提供的API，使用用户的经纬度逆向获取用户具体地点
@@ -131,6 +167,12 @@
 
 		mounted() {
 			this.getWeatherInfo()
+		},
+		watch: {
+			// eslint-disable-next-line no-unused-vars
+			searchEngine: function (newValue,oldValue) {
+				this.searchEngine = newValue
+			}
 		}
 	}
 </script>
@@ -139,6 +181,11 @@
 	.icons-list >>> .anticon {
 		margin-right: 6px;
 		font-size: 24px;
+	}
+
+	.searchEngine {
+		color: rgba(0, 0, 0, 0.65);
+
 	}
 
 	.slide-fade-enter-active {

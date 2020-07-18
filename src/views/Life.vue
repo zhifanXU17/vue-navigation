@@ -23,6 +23,7 @@
 		name: "Shopping",
 		data() {
 			return {
+				isLoading: true,
 				shoppingLinks: {
 					taobao: {
 						id: 1,
@@ -198,6 +199,9 @@
 				}
 			}
 		},
+		methods: {
+
+		}
 	}
 </script>
 

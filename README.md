@@ -1,24 +1,14 @@
-# vue-navigation
+# 网页导航
 
-## Project setup
+## 项目依赖安装和启动命令
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 功能清单
+- [x] 切换搜索引擎
+- [x] 用户定位城市
+- [ ] 用户自行切换定位城市
+- [x] 定位城市简要天气预报
+- [ ] 收录完成所有页面的导航
